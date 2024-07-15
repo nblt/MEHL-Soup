@@ -8,4 +8,4 @@ Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang, James T Kwok
 
 **ECCV 2024**
 
-The code is still under refinement.
+The code is raw and still under construction. We will release more friendly interface/implementation in the next couple months.
