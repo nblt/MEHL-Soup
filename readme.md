@@ -16,7 +16,9 @@ Our approach includes two key components: **1)** a hyper-plane optimization targ
 <!-- The code is raw and still under construction. We will release more friendly interface/implementation in the next couple months. -->
 
 ## How to run
-First, fine-tune multiple models with different hyper-parameters and store them into the directory `model_dir`. As example, you can download the public avaliable [checkpoints](https://github.com/mlfoundations/model-soups/blob/d5398f181ea51c5cd9d95ebacc6ea7132bb108ec/main.py#L67) from the [Model soup repo](https://github.com/mlfoundations/model-soups/tree/main) (72 CLIP ViT-B/32 models fine-tuned on ImageNet). Here is the example script that we use a model batch size of 18 to average 72 models expected to be run on a GPU with 24 GB memory:
+First, fine-tune multiple models with different hyper-parameters and store them into the directory `model_dir`. As example, you can download the public avaliable [checkpoints](https://github.com/mlfoundations/model-soups/blob/d5398f181ea51c5cd9d95ebacc6ea7132bb108ec/main.py#L67) from the [Model soup repo](https://github.com/mlfoundations/model-soups/tree/main) (72 CLIP ViT-B/32 models fine-tuned on ImageNet). 
+
+Here is the example script that we use a model batch size of 18 to average 72 models expected to be run on a GPU with 24 GB memory:
 
 ```bash
 #!/bin/bash
@@ -51,4 +53,7 @@ Greedy-Soup | 81.03 | 3501s | 3GB
 Learned-Soup+ | 81.39 | 7701s | 253GB
 MEHL-Soup+ | 81.62 | **808**s | **19**GB
 
-![Illustration of F-SAM](num_model_acc.png)
+MEHL-Soup+ is able to reduce the fine-tuning time cost by requring fewer models for reaching a similar test accuracy compared with greedy-soup.
+
+<img src="num_model_acc.png" alt="替代文本" width="60%">
+<!-- ![Illustration of F-SAM](num_model_acc.png) -->
