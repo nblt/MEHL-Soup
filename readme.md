@@ -78,3 +78,13 @@ Greedy-Soup |  81.03 |  80.78 |  80.08 |  79.70
 MEHL-Soup+ | 81.62(+**0.59**) |  81.58(+**0.80**) | 81.44(+**1.36**) | 81.01(+**1.31**)
 
 
+## Citation
+If you find this work helpful, please cite:
+```
+@inproceedings{li2024leaerning,
+  title={Learning Scalable Model Soup on a Single GPU: An Efficient Subspace Training Strategy},
+  author={Li, Tao and Jiang, Weisen and Liu, Fanghui and Huang, Xiaolin and Kwok, James T},
+  booktitle={European conference on computer vision (ECCV)},
+  year={2024}
+}
+```
