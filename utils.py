@@ -90,7 +90,7 @@ def eval_model(loader, model, criterion):
 
 def get_datasets(args):
     if args.datasets == 'CIFAR10':
-        print ('CIFAR10 dataset!')
+        print ('CIFAR10 dataset')
         normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
         
         transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
@@ -102,7 +102,7 @@ def get_datasets(args):
             ])
             
         if args.randaug:
-            print ('randaug!!!!!')
+            print ('use randaug')
             N=2; M=14;
             transform_train.transforms.insert(0, RandAugment(N, M))
             
@@ -120,8 +120,8 @@ def get_datasets(args):
         train_dataset = datasets.CIFAR10(root='./datasets/', train=True, transform=transform_train, download=True)
         test_dataset = datasets.CIFAR10(root='./datasets/', train=False, transform=transform_test)
         
-    if args.datasets == 'CIFAR10-small':
-        print ('CIFAR10 dataset!')
+    elif args.datasets == 'CIFAR100':
+        print ('CIFAR100 dataset')
         normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
         
         transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
@@ -133,40 +133,7 @@ def get_datasets(args):
             ])
             
         if args.randaug:
-            print ('randaug!!!!!')
-            N=2; M=14;
-            transform_train.transforms.insert(0, RandAugment(N, M))
-            
-        if args.finetune:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize, 
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-            
-        train_dataset = datasets.CIFAR10(root='./datasets/', train=True, transform=transform_train, download=True)
-        
-        train_dataset = Subset(train_dataset, range(10000))
-        test_dataset = datasets.CIFAR10(root='./datasets/', train=False, transform=transform_test)
-                
-    if args.datasets == 'CIFAR100':
-        print ('CIFAR100 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-        
-        transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-            ])
-
-        transform_test = transforms.Compose([
-                transforms.ToTensor(), normalize,
-            ])
-            
-        if args.randaug:
-            print ('randaug!!!!!')
+            print ('use randaug')
             N=2; M=14;
             transform_train.transforms.insert(0, RandAugment(N, M))
             
@@ -184,31 +151,8 @@ def get_datasets(args):
         train_dataset = datasets.CIFAR100(root='./datasets/', train=True, transform=transform_train, download=True)
         test_dataset = datasets.CIFAR100(root='./datasets/', train=False, transform=transform_test)
 
-    elif args.datasets == 'Flowers102':
-        print ('Flowers102 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-
-        if 'ViT' in args.arch or 'deit' in args.arch:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-        else:
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([transforms.ToTensor(), normalize,
-                ])
-        train_dataset = datasets.Flowers102(root='./datasets/', split='train', transform=transform_train, download=True)        
-        test_dataset = datasets.Flowers102(root='./datasets/', split='test', transform=transform_test, download=True)
-        
     elif args.datasets == 'ImageNet':
-        print ('ImageNet dataset!')
+        print ('ImageNet dataset')
         traindir = os.path.join('/opt/data/common/ILSVRC2012/', 'train')
         valdir = os.path.join('/opt/data/common/ILSVRC2012/', 'val')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -256,20 +200,16 @@ def get_datasets(args):
         idx_val = np.where(idxs)[0]
         idxs = (1 - idxs).astype('int')
         idx_train = np.where(idxs)[0]
-        # N = 30000
-        # np.random.seed(args.randomseed)
-        # random_permutation = list(np.random.permutation(len(idx_train)))
-        # idx_train = idx_train[random_permutation[:N]]
-        # print ('imagenet train:', len(idx_train), 'val:', len(idx_val))
     elif nn == 0:
         idx_train = random_permutation
         idx_val = None
     else:
         idx_train = random_permutation[:-nn]
         idx_val = random_permutation[-nn:]
+        
     # print (len(idx_train), len(idx_val))
-    
     # print (max(idx_train))
+    
     train_set = Subset(train_dataset, idx_train)
     val_set = Subset(train_dataset, idx_val)
     test_set = test_dataset
@@ -318,203 +258,6 @@ def get_datasets(args):
             num_workers=args.workers, pin_memory=True)
 
     return train_loader, val_loader, test_loader
-    
-def get_datasets_split(args):
-    if args.datasets == 'CIFAR10':
-        print ('cifar10 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-        
-        if 'deit' in args.arch:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize, 
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-        else:
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([transforms.ToTensor(), normalize,
-                ])        
-        
-        if args.randaug:
-            print ('randaug!!!!!')
-            N=2; M=14;
-            transform_train.transforms.insert(0, RandAugment(N, M))
-
-        train_dataset = datasets.CIFAR10(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR10(root='./datasets/', train=False, transform=transform_test)
-
-    elif args.datasets == 'CIFAR100':
-        print ('cifar100 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-
-        if 'deit' in args.arch:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize, 
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-        else:
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([transforms.ToTensor(), normalize,
-                ])        
-            
-        if args.randaug:
-            print ('randaug!!!!!')
-            N=2; M=14;
-            transform_train.transforms.insert(0, RandAugment(N, M))
-
-        train_dataset = datasets.CIFAR100(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR100(root='./datasets/', train=False, transform=transform_test)
-           
-    idx_train = load_train_idxs(args.val_ratio, args.datasets)
-    idx_val = load_val_idxs(args.val_ratio, args.datasets)
-    print (args.val_ratio, idx_val.shape)
-    train_set = Subset(train_dataset, idx_train)
-    val_set = Subset(train_dataset, idx_val)
-
-    train_loader = torch.utils.data.DataLoader(
-        train_set,
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
-    
-    val_loader = torch.utils.data.DataLoader(
-        val_set,
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
-
-    test_loader = torch.utils.data.DataLoader(
-        test_set,
-        batch_size=128, shuffle=False,
-        num_workers=args.workers, pin_memory=True)
-
-    return train_loader, val_loader, test_loader
-
-def get_datasets_split_ddp(args):
-    if args.datasets == 'CIFAR10':
-        print ('cifar10 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-        
-        if 'deit' in args.arch:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize, 
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-        else:
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([transforms.ToTensor(), normalize,
-                ])        
-            
-        if args.randaug:
-            print ('randaug!!!!!')
-            N=2; M=14;
-            transform_train.transforms.insert(0, RandAugment(N, M))
-
-        train_dataset = datasets.CIFAR100(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR100(root='./datasets/', train=False, transform=transform_test)
-            
-        train_dataset = datasets.CIFAR10(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR10(root='./datasets/', train=False, transform=transform_test)
-
-    elif args.datasets == 'CIFAR100':
-        print ('cifar100 dataset!')
-        normalize = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-
-        if 'deit' in args.arch:
-            normalize = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize, 
-                ])
-            transform_test = transforms.Compose([
-                    transforms.Resize((args.img_size, args.img_size)),
-                    transforms.ToTensor(), normalize,
-                ])
-        else:
-            transform_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                    transforms.RandomCrop(32, 4), transforms.ToTensor(), normalize,
-                ])
-            transform_test = transforms.Compose([transforms.ToTensor(), normalize,
-                ])        
-            
-        if args.randaug:
-            print ('randaug!!!!!')
-            N=2; M=14;
-            transform_train.transforms.insert(0, RandAugment(N, M))
-
-        train_dataset = datasets.CIFAR100(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR100(root='./datasets/', train=False, transform=transform_test)
-            
-        train_dataset = datasets.CIFAR100(root='./datasets/', train=True, transform=transform_train, download=True)        
-        test_set = datasets.CIFAR100(root='./datasets/', train=False, transform=transform_test)
-        
-    elif args.datasets == 'ImageNet':
-        print ('ImageNet dataset!')
-        traindir = os.path.join('/opt/data/common/ILSVRC2012', 'train')
-        valdir = os.path.join('/opt/data/common/ILSVRC2012', 'val')
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                        std=[0.229, 0.224, 0.225])
-
-        train_dataset = datasets.ImageFolder(
-            traindir,
-            transforms.Compose([
-                transforms.RandomResizedCrop(224),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                normalize,
-            ]))
-
-        test_set =  datasets.ImageFolder(valdir, transforms.Compose([
-                transforms.Resize(256),
-                transforms.CenterCrop(224),
-                transforms.ToTensor(),
-                normalize,
-            ]))
-        
-    idx_train = load_train_idxs(args.val_ratio, args.datasets)
-    idx_val = load_val_idxs(args.val_ratio, args.datasets)
-    print (args.val_ratio, idx_val.shape)
-    train_set = Subset(train_dataset, idx_train)
-    val_set = Subset(train_dataset, idx_val)
-        
-    batch_size_per_GPU = args.batch_size // args.world_size
-    
-    train_sampler = torch.utils.data.distributed.DistributedSampler(train_set)
-    val_sampler = torch.utils.data.distributed.DistributedSampler(val_set)
-    test_sampler = torch.utils.data.distributed.DistributedSampler(test_set)
-
-    train_loader = torch.utils.data.DataLoader(
-        train_set, batch_size=batch_size_per_GPU, sampler=train_sampler,
-        num_workers=args.workers, pin_memory=True)
-    
-    val_loader = torch.utils.data.DataLoader(
-        val_set, batch_size=batch_size_per_GPU, sampler=val_sampler,
-        num_workers=args.workers, pin_memory=True)
-
-    test_loader = torch.utils.data.DataLoader(
-        test_set, batch_size=batch_size_per_GPU, sampler=test_sampler,
-        num_workers=args.workers)
-
-    return train_loader, val_loader, test_loader
-
 
 def bn_update(loader, model):
     model.train()

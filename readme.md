@@ -1,6 +1,6 @@
 # Learning Scalable Model Soup on a Single GPU: An Efficient Subspace Training Strategy
 
-Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang, James T Kwok 
+Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang#, James T Kwok 
 
 (*Equally contribution)
 
@@ -11,7 +11,7 @@ Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang, James T Kwok
 ## Introduction
 [Model soup](https://proceedings.mlr.press/v162/wortsman22a/wortsman22a.pdf) is an effective strategy for enhancing generalization performance by averaging multiple models fine-tuned from different hyper-parameter configurations into a single "soup model" in weight space. Learned soup is promising to achieve better performance than greedy soup due to its better flexibility by learning the coefficients. However, it is often less perferred in practice due to its huge memory requirements (e.g. >250GB of memory required to average 72 CLIP ViT-B/32 models). In this work, we propose an efficient and scalable strategy named **MEHL-Soup** that allows enjoying the advantages of learned soup while maintaining similiar level of memory burden to that of greedy soup.
 
-Our approach includes two key components: **1)** a hyper-plane optimization target that enhances performance by facilitating coefficient expolation (i.e., negative coefficients), and **2)** a mini-batch model optimization strategy that requires memory only proportional to the model batch size, ensuring scalability.
+Our approach includes two key components: **1)** a hyper-plane optimization target that enhances performance by facilitating coefficient expolation (i.e., negative coefficients) and enabling efficient coefficient optimization by gradient projection, and **2)** a mini-batch model optimization strategy that requires memory only proportional to the model batch size, ensuring scalability.
 
 <!-- The code is raw and still under construction. We will release more friendly interface/implementation in the next couple months. -->
 
@@ -25,7 +25,6 @@ Here is the example script that we use a model batch size of 18 to average 72 mo
 
 lr=0.01
 wd=0.
-layer=0 
 devices=0
 port=1234
 model=clip-vit-b32
@@ -35,12 +34,19 @@ batch=18
 CUDA_VISIBLE_DEVICES=$devices python -m torch.distributed.launch \
     --nproc_per_node 1 --master_port $port MEHL_soup_layer.py \
     --lr $lr --batch-size 128 --wd $wd --epochs 5 \
-    --cosine-lr --optimizer adamw --layer-size $layer --model-location $model_dir \
+    --cosine-lr --optimizer adamw --model-location $model_dir \
     --datasets $dataset --params_start 0 --params_end  72 --arch $model \
     --optimizer adamw --split --ddp --randomseed $seed \
     --finetune --model_batch $batch --models_epochs 1
 ```
 
+`model_batch` is the model batch size (which can be adjusted to fit the GPU memory budget), 
+`models_epochs` is the model training epochs for outer loop,
+`epochs` is the training epochs for inner loop (see Algorithm 1).
+
+
+
+We also support multi-node training to distribute the memory load and computation of gradient projection across multiple nodes, if multiple gpus are available. This technique is integrated from [TWA](https://github.com/nblt/TWA). You can try it by setting `nproc_per_node` according to the devices you have.
 
 ## Some results
 

@@ -374,9 +374,6 @@ if __name__ == '__main__':
     device = torch.device("cuda", rank)
        
     # # Get model names
-    # if args.split:
-        # _, train_loader, test_loader = get_datasets_split_ddp(args)
-    # else:
     train_loader, val_loader, test_loader  = get_datasets(args)
 
     # model = models.__dict__[args.arch]().to(device)
