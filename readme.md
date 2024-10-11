@@ -15,8 +15,14 @@ Our approach includes two key components: **1)** a hyper-plane optimization targ
 
 <!-- The code is raw and still under construction. We will release more friendly interface/implementation in the next couple months. -->
 
+## Environment
+Install required dependencies:
+```
+pip install -r requirements.txt
+```
+
 ## How to run
-First, fine-tune multiple models with different hyper-parameters and store them into the directory `model_dir`. As example, you can download the public avaliable [checkpoints](https://github.com/mlfoundations/model-soups/blob/d5398f181ea51c5cd9d95ebacc6ea7132bb108ec/main.py#L67) from the [Model soup repo](https://github.com/mlfoundations/model-soups/tree/main) (72 CLIP ViT-B/32 models fine-tuned on ImageNet). 
+First, fine-tune multiple models with different hyper-parameters and store them into the directory `model_dir`. As example, you can download the public avaliable checkpoints following the [code](https://github.com/mlfoundations/model-soups/blob/d5398f181ea51c5cd9d95ebacc6ea7132bb108ec/main.py#L67) from the [Model soup repo](https://github.com/mlfoundations/model-soups/tree/main) (72 CLIP ViT-B/32 models fine-tuned on ImageNet). 
 
 Here is the example script that we use a model batch size of 18 to average 72 models expected to be run on a GPU with 24 GB memory:
 
@@ -57,9 +63,18 @@ Best individual model | 80.38 | - | -
 Uniform-Soup |79.97 | - | -
 Greedy-Soup | 81.03 | 3501s | 3GB
 Learned-Soup+ | 81.39 | 7701s | 253GB
-MEHL-Soup+ | 81.62 | **808**s | **19**GB
+MEHL-Soup+ | **81.62** | **808**s | **19**GB
 
 MEHL-Soup+ is able to reduce the fine-tuning time cost by requring fewer models for reaching a similar test accuracy compared with greedy-soup.
 
 <img src="num_model_acc.png" alt="替代文本" width="60%">
 <!-- ![Illustration of F-SAM](num_model_acc.png) -->
+
+MEHL-Soup+ is also less sensitive to top-performing models compared to Greedy-Soup, which starts from the best-performing model. For instance, after eliminating the top 42 performing models, MEHL-Soup+ still achieves over 81% accuracy, while Greedy-Soup drops to below 80% accuracy.
+
+models eliminated | - |  Top-2 |  Top-22 | Top-42
+---|---|---|---|---
+Greedy-Soup |  81.03 |  80.78 |  80.08 |  79.70
+MEHL-Soup+ | 81.62(+**0.59**) |  81.58(+**0.80**) | 81.44(+**1.36**) | 81.01(+**1.31**)
+
+
