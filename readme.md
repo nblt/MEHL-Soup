@@ -8,6 +8,15 @@ Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang#, James T Kwok
 
 **ECCV 2024**
 
+[**NEWS**] We release checkpoints for CLIP ViT-L/14 experiemnts used in the paper to support and advance related research:
+
+CIFAR-10: https://hkustconnect-my.sharepoint.com/:u:/g/personal/hyangbw_connect_ust_hk/EZ_ZT8wepGdLjYLXkswJXCEBObKILcIZng14jLYTAU_uVw?e=XhbkYX
+
+CIFAR-100: https://hkustconnect-my.sharepoint.com/:u:/g/personal/hyangbw_connect_ust_hk/Ee7-NLPxP4tKlxXV7P3jSRMBvBlCEpQ98iiJmhhuBPbrxQ?e=dly2Gi
+
+ImageNet:
+https://hkustconnect-my.sharepoint.com/:u:/g/personal/hyangbw_connect_ust_hk/EQCVVpTe82RLnt3ZektmN-0Bq8BWQD9OKpOCOheeDAg51w?e=HOeDhZ
+
 ## Introduction
 [Model soup](https://proceedings.mlr.press/v162/wortsman22a/wortsman22a.pdf) is an effective strategy for enhancing generalization performance by averaging multiple models fine-tuned from different hyper-parameter configurations into a single "soup model" in weight space. Learned soup is promising to achieve better performance than greedy soup due to its better flexibility by learning the coefficients. However, it is often less perferred in practice due to its huge memory requirements (e.g. >250GB of memory required to average 72 CLIP ViT-B/32 models). In this work, we propose an efficient and scalable strategy named **MEHL-Soup** that allows enjoying the advantages of learned soup while maintaining similiar level of memory burden to that of greedy soup.
 

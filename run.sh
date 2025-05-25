@@ -8,6 +8,7 @@ model=clip-vit-b32
 dataset=ImageNet
 model_dir=../models/
 batch=18
+seed=1
 CUDA_VISIBLE_DEVICES=$devices python -m torch.distributed.launch \
     --nproc_per_node 1 --master_port $port MEHL_soup_layer.py \
     --lr $lr --batch-size 128 --wd $wd --epochs 5 \
