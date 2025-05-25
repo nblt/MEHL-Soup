@@ -8,7 +8,7 @@ Tao Li*, Weisen Jiang*, Fanghui Liu, Xiaolin Huang#, James T Kwok
 
 **ECCV 2024**
 
-[**NEWS**] We release checkpoints for CLIP ViT-L/14 experiemnts used in the paper to support and advance related research:
+[**NEWS**] We release the checkpoints for CLIP ViT-L/14 experiments used in the paper to support and advance related research:
 
 CIFAR-10: https://hkustconnect-my.sharepoint.com/:u:/g/personal/hyangbw_connect_ust_hk/EZ_ZT8wepGdLjYLXkswJXCEBObKILcIZng14jLYTAU_uVw?e=XhbkYX
 
